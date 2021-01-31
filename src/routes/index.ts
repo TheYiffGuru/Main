@@ -9,6 +9,7 @@ app
 	.use(subdomain("api", require("./api").default))
 	.use("/api", require("./api").default)
 	.use("/albums", require("./albums").default)
+	.use("/dashboard", require("./dashboard").default)
 	.get("/", async (req, res) => {
 		return res.status(200).render("index");
 	})

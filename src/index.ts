@@ -16,7 +16,7 @@ app
 		name: "yiff",
 		secret: config.web.cookieSecret,
 		cookie: {
-			domain: "yiff.local",
+			domain: "yiff.guru",
 			secure: true,
 			httpOnly: true,
 			maxAge: 8.64e7,
@@ -34,9 +34,9 @@ app
 	.use(async (req, res, next) => {
 		if (req.session.id) {
 			req.data = SessionStore.get(req.session.id);
-			onFinished(res, () => {
-				SessionStore.set(req.sessionID, req.data);
-			});
+			onFinished(res, () =>
+				SessionStore.set(req.sessionID, req.data)
+			);
 		}
 
 		if (req.data.user === undefined) req.data.user = null;
