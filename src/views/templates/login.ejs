@@ -1,0 +1,16 @@
+<%- include("../partials/header.ejs", { title: "Login" , showType: "register" }) %>
+	<link rel="stylesheet" href="/styles/login-register.css">
+	<script src="/scripts/login-register.js"></script>
+	<div class="wrap">
+		<form id="loginRegisterModel" method="POST" action="/api/no-op" onsubmit="login(this); return false;">
+			<div class="loginRegisterInner main">
+				<h1><b>Log In Below</b></h1>
+				<input type="text" class="loginRegister" placeholder="Handle or Email" name="identifier" minlength="2"
+					onkeyup="checkLen(this);" autocomplete="email">
+				<input type="password" autocomplete="current-password" class="loginRegister" placeholder="Password"
+					name="password" minlength="8" maxlength="64" onkeyup="checkLen(this);">
+				<button id="loginRegister">Login</button>
+			</div>
+		</form>
+	</div>
+	<%- include("../partials/footer.ejs") %>

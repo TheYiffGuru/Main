@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<title>
+		The Yiff Guru - <%= locals.title %>
+	</title>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+	<link rel="stylesheet" href="/styles/main.css" />
+</head>
+
+<body>
+	<section class="tv-1" style="text-align: center;">
+		<div class="head">
+			<div class="lefthead">
+				<h1 class="name">The Yiff Guru</h1>
+			</div>
+			<div class="righthead">
+				<% if(locals.showType === "none") { }
+				else if(locals.showType === "register") { %>
+				<button class="navbtn" onclick="window.location.href='/register'">Register</button>
+				<% } else { %>
+				<% if(locals.user !== null) { %>
+				<button class="navbtn" onclick="window.location.href='/dashboard'"><%= locals.user.name %></button>
+				<% } else { %>
+				<button class="navbtn" onclick="window.location.href='/login'">Login</button>
+				<% } %>
+				<% } %>
+				<button class="navbtn">Gallery</button>
+			</div>
+		</div>
+	</section>

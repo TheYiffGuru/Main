@@ -1,0 +1,183 @@
+@import "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.1/css/all.min.css";
+
+#loginRegisterModel {
+	height: 500px;
+	width: 500px;
+	overflow: hidden;
+	/*background: #394a54;*/
+	background: #323232;
+	display: flex;
+}
+
+h1 {
+	text-align: center;
+}
+
+body {
+	margin: 0;
+	background: #222222;
+	font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+}
+
+.wrap {
+	height: 90vh;
+	display: -webkit-box;
+	display: -ms-flexbox;
+	display: flex;
+	overflow: hidden;
+	-webkit-box-align: center;
+	-ms-flex-align: center;
+	align-items: center;
+	width: 95%;
+	-webkit-box-pack: center;
+	-ms-flex-pack: center;
+	float: right;
+	padding: 0 3vw 0 0;
+	justify-content: center;
+	/* background: #222222; */
+}
+
+
+.loginRegister::placeholder {
+	color: #ccc;
+}
+
+.loginRegisterInner {
+	float: right;
+	padding: 0% 5%;
+	width: 100%;
+	display: flex;
+	flex-flow: column;
+}
+
+.loginRegister {
+	outline: none;
+	resize: none;
+	border: 2px solid transparent;
+	width: 70%;
+	align-self: center;
+	padding: .5rem;
+	/*background: #465a67;*/
+	background: #272727;
+	margin-top: .5vh;
+	margin-bottom: 2vh;
+	height: 2rem;
+	color: #ccc;
+	margin-left: 5%;
+	font-size: large;
+}
+
+* {
+	font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+}
+
+#registerModel,
+input,
+.registerIntegrations {
+	border-radius: 5px;
+}
+
+#loginRegisterModel {
+	border-radius: 30px;
+}
+
+
+label {
+	margin-left: 6%;
+	font-size: large;
+}
+
+.loginRegisterInner.main h1 {
+	margin-top: 15%;
+	margin-bottom: 10%;
+	color: rgb(158, 158, 158);
+}
+
+.loginRegisterInner.right {
+	width: 40%;
+	height: 100%;
+	float: right;
+	display: flex;
+	flex-flow: column;
+	background: #1f1e1ed0;
+	padding-top: 2.5%;
+}
+
+
+.loginRegisterIntegrations {
+	background: #222222;
+	border: none;
+	width: 80%;
+	align-self: center;
+	margin-top: 5%;
+	outline: none;
+	height: 12%;
+	color: rgb(170, 169, 169);
+	font-size: large;
+	text-align: left;
+}
+
+.loginRegisterIntegrations>i {
+	margin-left: 10%;
+	margin-right: 10%;
+	font-size: medium;
+}
+
+.title {
+	color: rgb(117, 115, 115);
+	font-size: small;
+	margin-left: 20%;
+}
+
+
+#loginRegisterModel .main>button {
+	width: 10rem;
+	height: 3rem;
+	/*background: #3f5b5d;*/
+	background: rgb(39, 38, 38);
+	border: none;
+	outline: none;
+	color: #ccc;
+	border-radius: 5px;
+	font-size: large;
+	align-self: center;
+}
+
+
+.fa-twitter {
+	color: #1DA1F2;
+}
+
+.fa-google {
+	color: #EA4335;
+}
+
+.fa-facebook-f {
+	color: #4285F4
+}
+
+#loginRegister {
+	margin-top: 7%;
+	text-align: center;
+}
+
+.fab {
+	transform: scale(2);
+}
+
+button {
+	cursor: pointer;
+}
+
+.invalid {
+	border-color: #803939;
+}
+
+a.toggle {
+	color: #ccc;
+	position: absolute;
+	top: 15px;
+	left: 15px;
+	text-decoration: none;
+	font-size: 2.5rem;
+}
