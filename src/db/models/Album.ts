@@ -104,10 +104,21 @@ export default class Album {
 
 	decodeId() { return Snowflake.decode(this.id); }
 
-	async getImages() {
-		return Promise.all(
+	async getImages(): Promise<(Image & Album["images"][number])[] & { order: (dir?: "desc" | "asc") => Image[]; }> {
+		const img: ThenReturnType<Album["getImages"]> = await Promise.all(
 			this.images.map(async ({ id }) => db.get("images", { id }))
-		).then(img => img.filter(v => v !== null) as Image[]);
+		).then(img => (img.filter(v => v !== null) as Image[]).map(v => Object.assign(v, this.images.find(i => i.id === v.id)))) as any;
+		const v = await Promise.all(
+			this.images.map(async ({ id }) => db.get("images", { id }))
+		).then(img => (img.filter(v => v !== null) as Image[]).map(v => ({
+			...v,
+			...this.images.find(i => i.id === v.id)
+		})));
+		if (!img.order) Object.defineProperty(img, "order", {
+			value(this: typeof img, dir?: "desc" | "asc") { return this.sort((a, b) => dir === "desc" ? b.pos - a.pos : a.pos - b.pos); }
+		});
+
+		return img;
 	}
 
 	async getArtist() { return db.get("user", { id: this.artist }); }

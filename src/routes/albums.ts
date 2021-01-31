@@ -31,7 +31,7 @@ app
 		});
 		res.status(200).render("albums/view", {
 			...a.toJSON(),
-			images: img.map(v => ({
+			images: img.order().map(v => ({
 				...v.toJSON(),
 				viewURL: v.getViewURL(),
 				fileURL: v.getFileURL()
