@@ -18,19 +18,17 @@ export default class Functions {
 	static mergeObjects<A extends object, B extends object>(a: A, b: B) {
 		// avoid references
 		const obj = JSON.parse(JSON.stringify(a)) as A & B;
-		// I hate the amount of ignores here, but I would much rather do that than rewrite this function
+		// I hate this, but I would much rather do that than rewrite this function
+		const c = obj as any;
+		const d = a as any;
+		const e = b as any;
 		for (const k of Object.keys(b)) {
 			// handling arrays is a tricky thing since we can't just merge them because of duplicates, so we'll just assume arrays will be zero length if they're "wrong"
-			// @ts-ignore
-			if (Array.isArray(b[k])) obj[k] = a[k] && a[k]?.length !== 0 ? a[k] : b[k];
-			// @ts-ignore
-			else if (typeof b[k] === "object" && b[k] !== null) {
-				// @ts-ignore
-				if (typeof a[k] !== "object" || a[k] === null) a[k] = {};
-				// @ts-ignore
-				obj[k] = this.mergeObjects(a[k], b[k]);
-				// @ts-ignore
-			} else obj[k] = typeof a[k] === "undefined" ? b[k] : a[k];
+			if (Array.isArray(e[k])) c[k] = d[k] && d[k]?.length !== 0 ? d[k] : e[k];
+			else if (typeof e[k] === "object" && e[k] !== null) {
+				if (typeof d[k] !== "object" || d[k] === null) d[k] = {};
+				c[k] = this.mergeObjects(d[k], e[k]);
+			} else c[k] = typeof d[k] === "undefined" ? e[k] : d[k];
 		}
 		return obj;
 	}
