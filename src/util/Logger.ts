@@ -50,7 +50,7 @@ export default class Logger {
 
 
 		if (!fs.existsSync(config.dir.logs)) fs.mkdirpSync(config.dir.logs);
-		fs.appendFileSync(`${config.dir.logs}/${date}.log`, Functions.consoleSanitize(`[${time}] ${Functions.ucwords(type)} | ${name instanceof Array ? name.join(" | ") : name.toString()} | ${message}\n`));
-		process.stdout.write(`[${Logger.COLORS.time(time)}] ${Logger.COLORS[type](Functions.ucwords(type))} | ${name instanceof Array ? name.map(n => Logger.COLORS[type](n)).join(" | ") : Logger.COLORS[type](name.toString())} | ${Logger.COLORS[type](message)}\n`);
+		fs.appendFileSync(`${config.dir.logs}/${date}.log`, Functions.consoleSanitize(`[${time}] ${Functions.ucwords(type)} | ${Array.isArray(name) ? name.join(" | ") : name.toString()} | ${message}\n`));
+		process.stdout.write(`[${Logger.COLORS.time(time)}] ${Logger.COLORS[type](Functions.ucwords(type))} | ${Array.isArray(name) ? name.map(n => Logger.COLORS[type](n)).join(" | ") : Logger.COLORS[type](name.toString())} | ${Logger.COLORS[type](message)}\n`);
 	}
 }
