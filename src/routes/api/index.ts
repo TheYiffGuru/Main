@@ -34,20 +34,31 @@ app
 			error: "Email failed internal validation."
 		});
 
-		const u = await db.collection("users").findOne({
-			$or: [
-				{
-					handle: req.body.handle
-				},
-				{
-					email: req.body.email
-				}
-			]
-		}).then(v => v === null ? null : new User(v.id, v));
+		let u: User | null;
 
-		if (u === null || !await u.checkPassword(req.body.password)) return res.status(400).json({
+		if (req.body.handle) u = await db.collection("users").findOne({
+			handle: req.body.handle
+		}).then(v => v === null ? null : new User(v.id, v));
+		else if (req.body.email) u = await db.collection("users").findOne({
+			email: req.body.email
+		}).then(v => v === null ? null : new User(v.id, v));
+		else u = null;
+
+		if (u === null) return res.status(400).json({
 			success: false,
-			error: "Invalid handle, email, or password."
+			error: "Invalid handle or email."
+		});
+
+		if (u.password === null) return res.status(400).json({
+			success: false,
+			error: "User does not have a password set."
+		});
+
+		const p = await u.checkPassword(req.body.password);
+
+		if (!p) return res.status(400).json({
+			success: false,
+			error: "Incorrect password."
 		});
 
 		req.data.user = u;
@@ -115,7 +126,6 @@ app
 		await Mailer.sendConfirmation(u);
 
 		req.data.user = u;
-
 
 		return res.status(201).json({
 			success: true,
