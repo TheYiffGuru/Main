@@ -99,7 +99,7 @@ export default class Image {
 	// need to do a function because it gets included into properties
 	getExt() { return config.mimes[this.file.type]; }
 
-	getViewURL() { return `${config.web.baseURL}/images/${this.id}`; }
+	getViewURL() { return `${config.web.baseURL()}/images/${this.id}`; }
 	getFileURL() { return `${config.web.imageURL(this.album)}/${this.file.md5}.${this.getExt()}`; }
 
 	/**
