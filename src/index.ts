@@ -8,6 +8,7 @@ import dns from "dns";
 import config from "./config";
 import SessionStore from "./util/SessionStore";
 import PostCSS from "./util/PostCSS";
+import WebhookHandler from "./util/WebhookHandler";
 
 const app = express();
 
@@ -59,7 +60,31 @@ process.nextTick(async () => {
 			if (!/^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$/.test(config.web.host)) {
 				ip = await new Promise((a, b) => dns.lookup(config.web.host, (err, addr) => err ? b(err) : a(addr)));
 			}
+
+			await WebhookHandler.executeDiscord("status", {
+				title: "Website Is Online",
+				color: 0x00A000,
+				timestamp: new Date().toISOString()
+			});
+
 			console.log(`Listening on http${config.web.ssl ? "s" : ""}://${config.web.host}${[80, 443].includes(config.web.port) ? "" : `:${config.web.port}`} (${ip! === undefined ? "" : `ip: ${ip}, `}publicDomain: ${config.web.domains.current})`);
 		});
 
 });
+
+let ran = false;
+async function exitHandler() {
+	// make sure we only run once
+	if (ran === true) return;
+	ran = true;
+	await WebhookHandler.executeDiscord("status", {
+		title: "Website Is Offline",
+		color: 0xF02C00,
+		timestamp: new Date().toISOString()
+	});
+	process.exit();
+}
+
+process
+	.on("SIGTERM", exitHandler)
+	.on("SIGINT", exitHandler);

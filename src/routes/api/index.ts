@@ -136,7 +136,7 @@ app
 				`Email: \`${u?.email}\``
 			].join("\n"),
 			timestamp: new Date().toISOString()
-		})
+		});
 
 		return res.status(201).json({
 			success: true,
