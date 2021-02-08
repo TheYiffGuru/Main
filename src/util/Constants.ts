@@ -19,3 +19,14 @@ export const PASSWORD = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,64}$/;
 export const HANDLE = /^[a-z\d_\-]{2,16}$/i; // Max 64^16 handles
 // this NEEDS to be narrowed
 export const NAME = /^.{2,}$/i;
+
+export const ALBUM_TITLE_MAX = 100;
+export const EXTERNAL_LINK_INFO_MAX = 125;
+export const EXTERNAL_LINK_TYPES = [
+	"e621",
+	"furaffinity",
+	"inkbunny",
+	"patreon",
+	"twitter",
+	"deviantart"
+] as const;

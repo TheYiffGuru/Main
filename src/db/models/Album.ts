@@ -3,6 +3,7 @@ import db, { mdb } from "..";
 import Snowflake from "../../util/Snowflake";
 import Functions from "../../util/Functions";
 import Image from "./Image";
+import { EXTERNAL_LINK_TYPES } from "../../util/Constants";
 
 export type AlbumProperties = WithoutFunctions<Album>;
 export { Album };
@@ -26,8 +27,8 @@ export default class Album {
 	tags: string[];
 	/** the id of the creator of this album */
 	creator: string;
-	/** the id of the artist of this album */
-	artist: string;
+	/** the id of the artist of this album  - null shows "Anyonymous" / "Unknown" */
+	artist: string | null;
 	/** the vanity url of this album */
 	vanity: string | null;
 	/** the images in this album, see Image.ts */
@@ -41,8 +42,8 @@ export default class Album {
 	}[];
 	/** The external services this album is located at */
 	externalLinks: {
-		type: string;
-		url: string;
+		type: (typeof EXTERNAL_LINK_TYPES)[number];
+		info: string;
 	}[];
 	constructor(id: string, data: AlbumProperties) {
 		this.id = id;
