@@ -33,7 +33,6 @@ yarn-error.log*
 # vercel
 .vercel
 
-src/config
 logs/
 src/public/scripts/*.js
 src/public/images/albums
