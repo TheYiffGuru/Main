@@ -7,11 +7,11 @@ import * as https from "https";
 import dns from "dns";
 import config from "./config";
 import SessionStore from "./util/SessionStore";
+import PostCSS from "./util/PostCSS";
 
 const app = express();
 
 app
-
 	.use(session({
 		name: "yiff",
 		secret: config.web.cookieSecret,
@@ -55,5 +55,7 @@ app
 		if (!/^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$/.test(config.web.host)) {
 			ip = await new Promise((a, b) => dns.lookup(config.web.host, (err, addr) => err ? b(err) : a(addr)));
 		}
+
+    await PostCSS.compileStyles();
 		console.log(`Listening on http${config.web.ssl ? "s" : ""}://${config.web.host}${[80, 443].includes(config.web.port) ? "" : `:${config.web.port}`}${ip! === undefined ? "" : ` (${ip})`}`);
 	});

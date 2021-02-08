@@ -42,7 +42,7 @@ function register(e: HTMLFormElement) {
 		}),
 		headers: {
 			"Content-Type": "application/json",
-			"Accept": "applicatoon/json"
+			"Accept": "application/json"
 		},
 		credentials: "same-origin"
 	})
