@@ -2,11 +2,13 @@ import express from "express";
 import db from "../db";
 import subdomain from "express-subdomain";
 import Verification from "../util/email/Verification";
+import config from "../config";
 
 const app = express.Router();
 
 app
 	.use(subdomain("api", require("./api").default))
+	.use(subdomain("i", express.static(`${config.dir.public}/images`)))
 	.use("/api", require("./api").default)
 	.use("/albums", require("./albums").default)
 	.use("/dashboard", require("./dashboard").default)
