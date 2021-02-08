@@ -1,11 +1,9 @@
 import Typescript from "typescript";
-import tsconfig from "../../tsconfig.json";
 import * as fs from "fs-extra";
-import path from "path";
 import Logger from "./Logger";
 import config from "../config";
 
-const dir = `${config.dir.base}/src/public/scripts`;
+const dir = `${config.dir.static}/scripts`;
 
 const l = fs.readdirSync(dir);
 for (const f of l) {
