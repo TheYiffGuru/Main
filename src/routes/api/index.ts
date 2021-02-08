@@ -3,6 +3,7 @@ import db from "../../db";
 import { User } from "../../db/models";
 import { EMAIL, HANDLE } from "../../util/Constants";
 import Mailer from "../../util/email/Mailer";
+import WebhookHandler from "../../util/WebhookHandler";
 
 const app = express.Router();
 
@@ -126,6 +127,16 @@ app
 		await Mailer.sendConfirmation(u);
 
 		req.data.user = u;
+
+		await WebhookHandler.executeDiscord("user", {
+			title: "User Registered",
+			color: 0xFFA500,
+			description: [
+				`User: @${u?.handle} (${u?.id})`,
+				`Email: \`${u?.email}\``
+			].join("\n"),
+			timestamp: new Date().toISOString()
+		})
 
 		return res.status(201).json({
 			success: true,

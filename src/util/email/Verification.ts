@@ -1,9 +1,10 @@
 import path from "path";
 import * as fs from "fs-extra";
 import config from "../../config";
-
 import crypto from "crypto";
 import Logger from "../Logger";
+import WebhookHandler from "../WebhookHandler";
+import db from "../../db";
 
 interface Entry {
 	user: string;
@@ -56,14 +57,41 @@ export default class Verification {
 			expire: new Date(Date.now() + this.EXPIRE_TIME).toISOString()
 		}).get(email)!;
 		this.save();
+		db
+			.get("user", { id: user })
+			.then(async (u) => WebhookHandler.executeDiscord("email", {
+				title: "Email Verification Started",
+				color: 0x00A000,
+				description: [
+					`User: @${u?.handle} (${u?.id})`,
+					`Email: \`${u?.email}\``
+				].join("\n"),
+				footer: {
+					text: "Expires At"
+				},
+				timestamp: new Date(Date.now() + this.EXPIRE_TIME).toISOString()
+			}));
 		return e;
 	}
 
 	static remove(email: string, reason?: "TIMEOUT" | "USED") {
 		const v = this.ENTRIES.get(email);
-		Logger.debug(`MailerVerification->remove`, `Removed the verification token for "${email}" (U-${v?.user || "Unknown"}, Reason: ${reason})`);
+		Logger.debug(`MailerVerification->remove`, `Removed the verification token for "${email}" (U-${v?.user || "Unknown"}, Reason: ${reason || "UNKNOWN"})`);
 		const i = this.ENTRIES.delete(email);
 		this.save();
+		db
+			.get("user", { email })
+			.then(async (u) => WebhookHandler.executeDiscord("email", {
+				title: "Email Verification Ended",
+				color: 0xF02C00,
+				description: [
+					`User: @${u?.handle} (${u?.id})`,
+					`Email: \`${u?.email}\``,
+					"",
+					`Reason: **${reason || "UNKNOWN"}**`
+				].join("\n"),
+				timestamp: new Date().toISOString()
+			}));
 		return i;
 	}
 
