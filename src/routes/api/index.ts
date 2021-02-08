@@ -101,8 +101,8 @@ app
 
 		const u = await db.create("user", {
 			email: req.body.email,
-			handle: req.body.handle,
-			name: req.body.handle
+			handle: req.body.handle.toLowerCase(),
+			name: req.body.handle.toLowerCase()
 		}).then(v => v === null ? null : new User(v.id, v));
 
 		if (u === null) return res.status(500).json({

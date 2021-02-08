@@ -16,6 +16,6 @@ export const USER_FLAGS = {
 export const EMAIL = /^[a-zA-Z0-9\.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
 // probably not final
 export const PASSWORD = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,64}$/;
-export const HANDLE = /^[A-Z\d_\-]{2,16}$/i; // Max 64^16 handles
+export const HANDLE = /^[a-z\d_\-]{2,16}$/i; // Max 64^16 handles
 // this NEEDS to be narrowed
 export const NAME = /^.{2,}$/i;

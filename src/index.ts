@@ -16,7 +16,7 @@ app
 		name: "yiff",
 		secret: config.web.cookieSecret,
 		cookie: {
-			domain: "yiff.guru",
+			domain: config.web.domains.current,
 			secure: true,
 			httpOnly: true,
 			maxAge: 8.64e7,
@@ -42,6 +42,7 @@ app
 		if (req.data.user === undefined) req.data.user = null;
 
 		res.locals.user = req.data.user;
+		res.locals.baseDomain = config.web.domains.current;
 
 		return next();
 	})
@@ -55,5 +56,5 @@ app
 		if (!/^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$/.test(config.web.host)) {
 			ip = await new Promise((a, b) => dns.lookup(config.web.host, (err, addr) => err ? b(err) : a(addr)));
 		}
-		console.log(`Listening on http${config.web.ssl ? "s" : ""}://${config.web.host}${[80, 443].includes(config.web.port) ? "" : `:${config.web.port}`}${ip! === undefined ? "" : ` (${ip})`}`);
+		console.log(`Listening on http${config.web.ssl ? "s" : ""}://${config.web.host}${[80, 443].includes(config.web.port) ? "" : `:${config.web.port}`} (${ip! === undefined ? "" : `ip: ${ip}, `}publicDomain: ${config.web.domains.current})`);
 	});
