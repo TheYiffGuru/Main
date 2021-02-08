@@ -28,6 +28,6 @@
         "tmp",
         "logs",
         // better to compile them ourselves
-        "src/public/scripts"
+        "src/public/static/scripts"
     ]
 }

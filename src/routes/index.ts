@@ -8,7 +8,8 @@ const app = express.Router();
 
 app
 	.use(subdomain("api", require("./api").default))
-	.use(subdomain("i", express.static(`${config.dir.public}/images`)))
+	.use(subdomain("i", express.static(`${config.dir.static}/images`)))
+	.use(subdomain("a", express.static(config.dir.albums)))
 	.use("/api", require("./api").default)
 	.use("/albums", require("./albums").default)
 	.use("/dashboard", require("./dashboard").default)

@@ -1,7 +1,8 @@
 import { promises as fs } from "fs";
 import Logger from "./Logger";
 import postcss from "postcss";
-import { join } from "path";
+import config from "../config";
+
 
 /**
  * PostCSS utility
@@ -12,9 +13,9 @@ export default class PostCSS {
    * Compiles all stylesheets and places them in src/public/styles
    */
   static async compileStyles() {
-    const ROOT_DIR = join(__dirname, "..", "public", "styles");
-    const MAIN_STYLESHEET = join(__dirname, "..", "public", "scss", "style.scss");
-    const GOTO_STYLESHEET = join(__dirname, "..", "public", "styles", "style.css");
+    const ROOT_DIR = `${config.dir.static}/styles`;
+    const MAIN_STYLESHEET = `${config.dir.static}/scss/style.scss`;
+    const GOTO_STYLESHEET = `${config.dir.static}/styles/style.css`;
 
     Logger.debug("PostCSS", `Now loading styles in "${ROOT_DIR}"...`);
 
@@ -27,8 +28,8 @@ export default class PostCSS {
 
     Logger.warn("PostCSS", `Using v${processor.version} of PostCSS`);
 
-    const result = await processor.process(css, { 
-      from: MAIN_STYLESHEET, 
+    const result = await processor.process(css, {
+      from: MAIN_STYLESHEET,
       to: GOTO_STYLESHEET
     });
 

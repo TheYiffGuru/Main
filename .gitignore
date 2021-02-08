@@ -34,8 +34,7 @@ yarn-error.log*
 .vercel
 
 logs/
-src/public/scripts/*.js
-src/public/images/albums
+src/public/static/scripts/*.js
+src/public/albums
 test/
 .vscode/
-src/public/images/albums
