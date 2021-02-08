@@ -59,30 +59,6 @@ export default class Mailer {
 				URL: `https://yiff.guru/confirm-email?token=${token}`
 			})
 		);
-		console.log(
-			"To:",
-			user.email,
-			"\n",
-			"\n",
-			"Subject:",
-			Templater.parseString(t.content.subject, {
-				NAME: user.name,
-				HANDLE: user.handle,
-				EMAIL: user.email,
-				TOKEN: token,
-				URL: `https://yiff.guru/confirm-email?token=${token}`
-			}),
-			"\n",
-			"\n",
-			"Body:",
-			Templater.parseString(t.content.body, {
-				NAME: user.name,
-				HANDLE: user.handle,
-				EMAIL: user.email,
-				TOKEN: token,
-				URL: `https://yiff.guru/confirm-email?token=${token}`
-			})
-		);
 		return s.rejected.length === 0;
 	}
 }
