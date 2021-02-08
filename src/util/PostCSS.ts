@@ -12,17 +12,17 @@ export default class PostCSS {
    * Compiles all stylesheets and places them in src/public/styles
    */
   static async compileStyles() {
-    const ROOT_DIR = join(__dirname, '..', 'public', 'styles');
-    const MAIN_STYLESHEET = join(__dirname, '..', 'public', 'scss', 'style.scss');
-    const GOTO_STYLESHEET = join(__dirname, '..', 'public', 'styles', 'style.css');
+    const ROOT_DIR = join(__dirname, "..", "public", "styles");
+    const MAIN_STYLESHEET = join(__dirname, "..", "public", "scss", "style.scss");
+    const GOTO_STYLESHEET = join(__dirname, "..", "public", "styles", "style.css");
 
-    Logger.debug("PostCSS", `Now loading styles in '${ROOT_DIR}'...`);
+    Logger.debug("PostCSS", `Now loading styles in "${ROOT_DIR}"...`);
 
-    const css = await fs.readFile(MAIN_STYLESHEET, { encoding: 'utf-8' });
+    const css = await fs.readFile(MAIN_STYLESHEET, { encoding: "utf-8" });
     const processor = postcss([
-      require('autoprefixer'),
-      require('postcss-import'),
-      require('tailwindcss')
+      require("autoprefixer"),
+      require("postcss-import"),
+      require("tailwindcss")
     ]);
 
     Logger.warn("PostCSS", `Using v${processor.version} of PostCSS`);
