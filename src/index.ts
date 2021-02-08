@@ -61,7 +61,8 @@ process.nextTick(async () => {
 				ip = await new Promise((a, b) => dns.lookup(config.web.host, (err, addr) => err ? b(err) : a(addr)));
 			}
 
-			await WebhookHandler.executeDiscord("status", {
+			// only in prod
+			if (config.currentHostname === config.prodHostname) await WebhookHandler.executeDiscord("status", {
 				title: "Website Is Online",
 				color: 0x00A000,
 				timestamp: new Date().toISOString()
@@ -77,7 +78,9 @@ async function exitHandler() {
 	// make sure we only run once
 	if (ran === true) return;
 	ran = true;
-	await WebhookHandler.executeDiscord("status", {
+
+	// only in prod
+	if (config.currentHostname === config.prodHostname) await WebhookHandler.executeDiscord("status", {
 		title: "Website Is Offline",
 		color: 0xF02C00,
 		timestamp: new Date().toISOString()
