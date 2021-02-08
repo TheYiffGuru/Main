@@ -3,13 +3,14 @@
   "version": "1.0.0",
   "scripts": {
     "update": "npm update && npm update -D",
-    "build": "rm -rf build && tsc && echo Build Finished",
+    "build": "rm -rf build && tsc && cp -r src/public build/src/public && echo Build Finished",
     "dev": "npm run build && node .",
     "start": "node .",
     "ssl": "sh src/config/ssl/update.sh"
   },
   "dependencies": {
     "@donovan_dmc/db": "^1.0.1",
+    "autoprefixer": "^10.2.4",
     "bcrypt": "^5.0.0",
     "chunk": "^0.0.3",
     "deasync": "^0.1.21",
@@ -24,7 +25,10 @@
     "leeks.js": "^0.0.9",
     "morgan": "^1.10.0",
     "nodemailer": "^6.4.17",
-    "on-finished": "^2.3.0"
+    "on-finished": "^2.3.0",
+    "postcss": "^8.2.5",
+    "postcss-import": "^14.0.0",
+    "tailwindcss": "^2.0.3"
   },
   "devDependencies": {
     "@types/bcrypt": "^3.0.0",
