@@ -10,6 +10,7 @@ app
 	.use(subdomain("api", require("./api").default))
 	.use(subdomain("i", express.static(`${config.dir.static}/images`)))
 	.use(subdomain("a", express.static(config.dir.albums)))
+	.use(express.static(config.dir.static))
 	.use("/api", require("./api").default)
 	.use("/albums", require("./albums").default)
 	.use("/dashboard", require("./dashboard").default)

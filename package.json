@@ -3,9 +3,9 @@
   "version": "1.0.0",
   "scripts": {
     "update": "npm update && npm update -D",
-    "build": "rm -rf build && tsc && cp -r src/public build/src/public && echo Build Finished",
+    "build": "rm -rf build && tsc && echo Build Finished && npm run files && echo Files Copied",
     "dev": "npm run build && node index.js",
-    "start": "npm run files && node index.js",
+    "start": "node index.js",
     "ssl": "sh src/config/ssl/update.sh",
     "files": "cp -r src/public/* /var/www/"
   },
