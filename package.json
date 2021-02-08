@@ -4,8 +4,8 @@
   "scripts": {
     "update": "npm update && npm update -D",
     "build": "rm -rf build && tsc && cp -r src/public build/src/public && echo Build Finished",
-    "dev": "npm run build && node .",
-    "start": "node .",
+    "dev": "npm run build && node index.js",
+    "start": "node index.js",
     "ssl": "sh src/config/ssl/update.sh"
   },
   "dependencies": {
