@@ -142,7 +142,8 @@ export default class User {
 				"avatar",
 				"flags",
 				"handle",
-				"name"
+				"name",
+				"externalLinks"
 			],
 			[
 				"email",

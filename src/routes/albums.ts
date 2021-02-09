@@ -27,7 +27,7 @@ app
 		const img = await a.getImages();
 		let ar = await a.getArtist();
 		if (ar === null) ar = await db.get("user", {
-			handle: "anonumous"
+			handle: "anonymous"
 		});
 		res.status(200).render("albums/view", {
 			...a.toJSON(),

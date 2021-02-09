@@ -1,7 +1,7 @@
 /// <reference path="../../../util/@types/Express.d.ts" />
 import express from "express";
 import db from "../../../db";
-import { Album, User } from "../../../db/models";
+import { Album } from "../../../db/models";
 import AuthHandler from "../../../util/AuthHandler";
 import { ORIGINAL_NAME_MAX, ALBUM_TITLE_MAX, Colors, EXTERNAL_LINK_INFO_MAX, EXTERNAL_LINK_TYPES, RATINGS } from "../../../util/Constants";
 import WebhookHandler from "../../../util/WebhookHandler";
@@ -94,7 +94,7 @@ app
 			]
 		}) : null;
 
-		if (!req.body.artist && !ar) return res.status(400).json({
+		if (req.body.artist && !ar) return res.status(400).json({
 			success: false,
 			error: "Unknown artist."
 		});
@@ -115,7 +115,7 @@ app
 		});
 
 		let at: Exclude<typeof ar, null>;
-		if (ar === null) at = await db.collection("users").findOne({ handle: "anonymoys" }) as typeof at;
+		if (ar === null) at = await db.collection("users").findOne({ handle: "anonymous" }) as typeof at;
 		else at = ar;
 
 		await WebhookHandler.executeDiscord("album", {
@@ -242,7 +242,7 @@ app
 				`Rating: **${Object.entries(RATINGS).find(r => r[1] === rating)![0]}**`,
 				`Album: **${a.title}** (${a.id}${a.vanity ? `/${a.vanity}` : ""})`,
 				`Creator: **@${req.data.user!.handle}** (${req.data.user!.id})`,
-				`URL: [${config.web.baseURL("a")}/${a.id}/${img.id}.${config.mimes[t.mime as keyof typeof config["mimes"]]}](${config.web.baseURL("a")}/${a.id}/${img.id}..${config.mimes[t.mime as keyof typeof config["mimes"]]})`,
+				`URL: [${config.web.baseURL("a")}/${a.id}/${img.id}.${config.mimes[t.mime as keyof typeof config["mimes"]]}](${config.web.baseURL("a")}/${a.id}/${img.id}.${config.mimes[t.mime as keyof typeof config["mimes"]]})`,
 			].join("\n"),
 			thumbnail: {
 				url: `${config.web.baseURL("a")}/${a.id}/${img.id}.${config.mimes[t.mime as keyof typeof config["mimes"]]}`
@@ -255,7 +255,7 @@ app
 			}))
 		});
 
-		return res.status(200).json({
+		return res.status(201).json({
 			success: true,
 			data: img.toJSON()
 		});

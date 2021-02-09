@@ -130,7 +130,9 @@ export default class Album {
 				"tags",
 				"creator",
 				"vanity",
-				"images"
+				"images",
+				"externalLinks",
+				"artist"
 			],
 			[],
 			false
