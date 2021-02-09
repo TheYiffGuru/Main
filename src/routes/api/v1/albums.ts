@@ -3,7 +3,7 @@ import express from "express";
 import db from "../../../db";
 import { Album } from "../../../db/models";
 import AuthHandler from "../../../util/AuthHandler";
-import { ORIGINAL_NAME_MAX, ALBUM_TITLE_MAX, Colors, EXTERNAL_LINK_INFO_MAX, EXTERNAL_LINK_TYPES, RATINGS } from "../../../util/Constants";
+import { ORIGINAL_NAME_MAX, ALBUM_TITLE_MAX, Colors, EXTERNAL_LINK_INFO_MAX, EXTERNAL_LINK_TYPES, RATINGS, DESCRIPTION_MAX_LENGTH } from "../../../util/Constants";
 import WebhookHandler from "../../../util/WebhookHandler";
 import crypto from "crypto";
 import config from "../../../config";
@@ -46,6 +46,11 @@ app
 		if (req.body.title.length > ALBUM_TITLE_MAX) return res.status(400).json({
 			success: false,
 			error: "Album title is too long."
+		});
+
+		if (req.body.description && req.body.description.length > DESCRIPTION_MAX_LENGTH) return res.status(400).json({
+			success: false,
+			error: "Album description is too long."
 		});
 
 		let e: Album["externalLinks"] = [];
@@ -106,7 +111,8 @@ app
 			artist: ar?.id || null,
 			vanity: null,
 			images: [],
-			externalLinks: e
+			externalLinks: e,
+			description: req.body.description || ""
 		});
 
 		if (a === null) return res.status(500).json({

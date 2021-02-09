@@ -23,6 +23,7 @@ export const NAME = /^.{2,}$/i;
 export const ORIGINAL_NAME_MAX = 100;
 export const ALBUM_TITLE_MAX = 100;
 export const EXTERNAL_LINK_INFO_MAX = 125;
+export const DESCRIPTION_MAX_LENGTH = 500;
 export const EXTERNAL_LINK_TYPES = [
 	"e621",
 	"furaffinity",

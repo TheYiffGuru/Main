@@ -12,7 +12,9 @@ You can find us in our [Discord Server](https://discord.gg/bq8GC8XJ2p)
 
 ### API/Backend
 - [ ] Allow general creation of artist entries
-- [ ] Make artists different for each image
+- [x] ~~Make artists different for each image~~ (changed to below)
+- [x] Create "mixed-artists" user for albums with more than one artist
+- [x] Album descriptions
 - [ ] Modify albums
 - [ ] Delete albums
 - [ ] Modify images

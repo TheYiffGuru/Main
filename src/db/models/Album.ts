@@ -16,7 +16,8 @@ export default class Album {
 		artist: null,
 		vanity: null,
 		images: [],
-		externalLinks: []
+		externalLinks: [],
+		description: ""
 	};
 
 	/** the id of the album */
@@ -45,6 +46,8 @@ export default class Album {
 		type: (typeof EXTERNAL_LINK_TYPES)[number];
 		info: string;
 	}[];
+	/** Some extra info about this album (markdown?) */
+	description: string;
 	constructor(id: string, data: AlbumProperties) {
 		this.id = id;
 		this.load(data);
@@ -132,7 +135,8 @@ export default class Album {
 				"vanity",
 				"images",
 				"externalLinks",
-				"artist"
+				"artist",
+				"description"
 			],
 			[],
 			false
