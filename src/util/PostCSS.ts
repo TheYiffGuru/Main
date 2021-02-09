@@ -1,6 +1,6 @@
 import { promises as fs } from "fs";
 import Logger from "./Logger";
-import postcss from "postcss";
+import postcss, { Warning } from "postcss";
 import config from "../config";
 
 
@@ -9,38 +9,37 @@ import config from "../config";
  * @author August [<cutie@floofy.dev>]
  */
 export default class PostCSS {
-  /**
-   * Compiles all stylesheets and places them in src/public/styles
-   */
-  static async compileStyles() {
-    const ROOT_DIR = `${config.dir.static}/styles`;
-    const MAIN_STYLESHEET = `${config.dir.static}/scss/style.scss`;
-    const GOTO_STYLESHEET = `${config.dir.static}/styles/style.css`;
+	static IN_DIR = `${config.dir.static}/scss`;
+	static OUT_DIR = `${config.dir.static}/styles`;
+	/**
+	 * Compiles all stylesheets and places them in src/public/styles
+	 */
+	static async compileStyles() {
+		Logger.debug("PostCSS", `Loading styles in "${PostCSS.OUT_DIR}".`);
 
-    Logger.debug("PostCSS", `Now loading styles in "${ROOT_DIR}"...`);
+		const files = await fs.readdir(this.IN_DIR);
+		const processor = postcss([
+			require("autoprefixer"),
+			require("postcss-import"),
+			require("tailwindcss")
+		]);
 
-    const css = await fs.readFile(MAIN_STYLESHEET, { encoding: "utf-8" });
-    const processor = postcss([
-      require("autoprefixer"),
-      require("postcss-import"),
-      require("tailwindcss")
-    ]);
+		Logger.info("PostCSS", `Using v${processor.version}`);
 
-    Logger.warn("PostCSS", `Using v${processor.version} of PostCSS`);
+		for (let i = 0; i < files.length; i++) {
+			const css = await fs.readFile(`${this.IN_DIR}/${files[i]}`, { encoding: "utf-8" });
+			const from = `${this.IN_DIR}/${files[i]}`;
+			const to = `${this.OUT_DIR}/${files[i].replace(/\.scss/, ".css")}`;
+			const result = await processor.process(css, {
+				from,
+				to
+			});
 
-    const result = await processor.process(css, {
-      from: MAIN_STYLESHEET,
-      to: GOTO_STYLESHEET
-    });
+			const warnings = result.warnings();
 
-    const warnings = result.warnings();
-
-    Logger.debug("PostCSS ~ Compiled", `Compiled successfully(?) with ${warnings.length} warnings`);
-    for (let i = 0; i < warnings.length; i++) {
-      const warning = warnings[i];
-      Logger.log(`PostCSS ~ Compilation ~ Warning #${i + 1}`, warning.toString());
-    }
-
-    await fs.writeFile(GOTO_STYLESHEET, result.css);
-  }
+			Logger.debug("PostCSS->Compile", `Compiled "${files[i]}" into "${files[i].replace(/\.scss/, ".css")}" with ${warnings.length} warning${warnings.length === 1 ? "" : "s"} `);
+			for (let ii = 0; ii < warnings.length; ii++) Logger.warn(["PostCSS->Compile", files[i]], `Warning #${ii + 1} - ${warnings[ii].toString()} `);
+			await fs.writeFile(to, result.css);
+		}
+	}
 }

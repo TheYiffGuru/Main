@@ -36,5 +36,7 @@ yarn-error.log*
 logs/
 src/public/static/scripts/*.js
 src/public/albums
+src/public/static/styles/*
+!src/public/static/styles/.gitkeep
 test/
 .vscode/
