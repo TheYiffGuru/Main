@@ -1,7 +1,9 @@
+import { Colors } from "@uwu-codes/core";
 import NodeMailer from "nodemailer";
 import config from "../../config";
 import { User } from "../../db/models";
 import Logger from "../Logger";
+import WebhookHandler from "../WebhookHandler";
 import Templater from "./Templater";
 import Verification from "./Verification";
 
@@ -31,8 +33,22 @@ export default class Mailer {
 				html
 			}, (err, res) => err ? b(err) : a(res))
 		)
-			.then(res => {
+			.then(async (res) => {
 				Logger.debug("Mailer->send", `${res.rejected.length === 0 ? "Successful" : "Unsuccessful"} send attempt to "${res.envelope.to.join("\", \"")}", from "${res.envelope.from}". Message ID: ${res.messageId}`);
+
+				await WebhookHandler.executeDiscord("email", {
+					title: "Email Sent",
+					color: res.rejected.length === 0 ? Colors.green : Colors.red,
+					description: [
+						`Successful: ${res.rejected.length === 0 ? "Yes" : "No"}`,
+						`From: \`${config.services.smtp.from}\``,
+						`To: \`${to}\``,
+						`Subject Length: **${subject.length}**`,
+						`Body Length: **${html.length}**`
+					].join("\n"),
+					timestamp: new Date().toISOString()
+				});
+
 				return res;
 			});
 	}

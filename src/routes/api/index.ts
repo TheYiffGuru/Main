@@ -4,6 +4,7 @@ import { User } from "../../db/models";
 import { EMAIL, HANDLE } from "../../util/Constants";
 import Mailer from "../../util/email/Mailer";
 import WebhookHandler from "../../util/WebhookHandler";
+import { Colors } from "@uwu-codes/core";
 
 const app = express.Router();
 
@@ -130,7 +131,7 @@ app
 
 		await WebhookHandler.executeDiscord("user", {
 			title: "User Registered",
-			color: 0xFFA500,
+			color: Colors.green,
 			description: [
 				`User: @${u?.handle} (${u?.id})`,
 				`Email: \`${u?.email}\``

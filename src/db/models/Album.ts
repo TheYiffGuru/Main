@@ -116,7 +116,7 @@ export default class Album {
 		return img;
 	}
 
-	async getArtist() { return db.get("user", { id: this.artist }); }
+	async getArtist() { return this.artist === null ? null : db.get("user", { id: this.artist }); }
 
 	/**
 	 * Convert this album object image a JSON representation.

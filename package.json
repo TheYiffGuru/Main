@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@donovan_dmc/db": "^1.0.1",
+    "@uwu-codes/core": "^1.0.15",
     "autoprefixer": "^10.2.4",
     "bcrypt": "^5.0.0",
     "chunk": "^0.0.3",
@@ -47,8 +48,8 @@
     "@types/node": "^14.14.25",
     "@types/nodemailer": "^6.4.0",
     "@types/on-finished": "^2.3.1",
-    "@typescript-eslint/eslint-plugin": "^4.14.2",
-    "@typescript-eslint/parser": "^4.14.2",
+    "@typescript-eslint/eslint-plugin": "^4.15.0",
+    "@typescript-eslint/parser": "^4.15.0",
     "eslint": "^7.19.0",
     "eslint-plugin-deprecation": "^1.2.0",
     "eslint-plugin-import": "^2.22.1",

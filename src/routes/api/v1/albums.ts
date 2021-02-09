@@ -1,8 +1,11 @@
 /// <reference path="../../../util/@types/Express.d.ts" />
 
+import { Colors } from "@uwu-codes/core";
 import express from "express";
 import db from "../../../db";
+import { Album } from "../../../db/models";
 import { ALBUM_TITLE_MAX, EXTERNAL_LINK_INFO_MAX, EXTERNAL_LINK_TYPES } from "../../../util/Constants";
+import WebhookHandler from "../../../util/WebhookHandler";
 
 const app = express.Router();
 
@@ -34,14 +37,14 @@ app
 			error: "Album title is too long."
 		});
 
-		let e = [];
+		let e: Album["externalLinks"] = [];
 		if (req.body.externalLinks) {
 			if (!Array.isArray(req.body.externalLinks)) return res.status(400).json({
 				success: false,
 				error: "Invalid content for externalLinks."
 			});
 
-			e = req.body.externalLinks.map((l, i) => {
+			e = (req.body.externalLinks as Album["externalLinks"]).map((l, i) => {
 				if (!l.type) return res.status(400).json({
 					success: false,
 					error: `externalLinks[${i}].type is missing.`
@@ -65,8 +68,8 @@ app
 				return {
 					type: l.type,
 					info: l.info
-				}
-			});
+				};
+			}) as Album["externalLinks"];
 		}
 
 		const a = await db.create("album", {
@@ -82,6 +85,22 @@ app
 		if (a === null) return res.status(500).json({
 			success: false,
 			error: "Unknown internal server error."
+		});
+
+		await WebhookHandler.executeDiscord("album", {
+			title: "Album Created",
+			color: Colors.green,
+			description: [
+				`Title: ${a.title}`,
+				`Tags: ${a.tags.length === 0 ? "**NONE**" : `\`${a.tags.join("`, `")}\``}`,
+				`Creator: **@${req.data.user!.handle}** (${a.creator})`
+			].join("\n"),
+			timestamp: new Date().toISOString(),
+			fields: a.externalLinks.map(({ type: name, info: value }) => ({
+				name,
+				value,
+				inline: true
+			}))
 		});
 
 		return res.status(201).json({
