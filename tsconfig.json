@@ -16,7 +16,8 @@
         "newLine": "lf" ,
         "strict": true,
         "strictPropertyInitialization": false,
-        "strictBindCallApply": true
+        "strictBindCallApply": true,
+        "skipLibCheck": true
     },
     "include": [
 		"**/*"
@@ -27,6 +28,7 @@
         "out",
         "tmp",
         "logs",
+        "test",
         // better to compile them ourselves
         "src/public/static/scripts"
     ]

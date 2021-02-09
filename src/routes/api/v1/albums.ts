@@ -1,10 +1,9 @@
 /// <reference path="../../../util/@types/Express.d.ts" />
 
-import { Colors } from "@uwu-codes/core";
 import express from "express";
 import db from "../../../db";
 import { Album } from "../../../db/models";
-import { ALBUM_TITLE_MAX, EXTERNAL_LINK_INFO_MAX, EXTERNAL_LINK_TYPES } from "../../../util/Constants";
+import { ALBUM_TITLE_MAX, Colors, EXTERNAL_LINK_INFO_MAX, EXTERNAL_LINK_TYPES } from "../../../util/Constants";
 import WebhookHandler from "../../../util/WebhookHandler";
 
 const app = express.Router();

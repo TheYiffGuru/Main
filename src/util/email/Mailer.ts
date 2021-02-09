@@ -1,7 +1,7 @@
-import { Colors } from "@uwu-codes/core";
 import NodeMailer from "nodemailer";
 import config from "../../config";
 import { User } from "../../db/models";
+import { Colors } from "../Constants";
 import Logger from "../Logger";
 import WebhookHandler from "../WebhookHandler";
 import Templater from "./Templater";
