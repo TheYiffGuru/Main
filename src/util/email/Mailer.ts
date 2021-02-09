@@ -65,14 +65,14 @@ export default class Mailer {
 				HANDLE: user.handle,
 				EMAIL: user.email,
 				TOKEN: token,
-				URL: `https://yiff.guru/confirm-email?token=${token}`
+				URL: `${config.web.baseURL()}/confirm-email?token=${token}`
 			}),
 			Templater.parseString(t.content.body, {
 				NAME: user.name,
 				HANDLE: user.handle,
 				EMAIL: user.email,
 				TOKEN: token,
-				URL: `https://yiff.guru/confirm-email?token=${token}`
+				URL: `${config.web.baseURL()}/confirm-email?token=${token}`
 			})
 		);
 		return s.rejected.length === 0;
