@@ -122,8 +122,9 @@ app
 			title: "Album Created",
 			color: Colors.green,
 			description: [
-				`Title: ${a.title}`,
-				`Tags: ${a.tags.length === 0 ? "**NONE**" : `\`${a.tags.join("`, `")}\``}`,
+				`ID: **${a.id}**`,
+				`Title: **${a.title}**`,
+				`Tags: **${a.tags.length === 0 ? "NONE" : a.tags.join("**, **")}**`,
 				`Creator: **@${req.data.user!.handle}** (${a.creator})`,
 				`Artist: **@${at.handle}** (${at.id})`
 			].join("\n"),
