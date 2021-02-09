@@ -109,4 +109,29 @@ export default class Functions {
 				[K in keyof typeof USER_FLAGS]: boolean;
 			};
 	}
+
+	/**
+	 * Format byte measurements for human readability.
+	 *
+	 * @static
+	 * @param {(string | number)} str - The amount to format.
+	 * @param {number} [precision] - Where to cut off floating point numbers at.
+	 * @returns {string}
+	 * @memberof Strings
+	 * @example Strings.formatBytes("10000000");
+	 * @example Strings.formatBytes("1000000000", 2);
+	 */
+	static formatBytes(str: string | number, precision?: number) {
+		if (precision === undefined) precision = 2;
+		str = Number(str);
+		const { KB, MB, GB } = {
+			KB: 1000,
+			MB: 1000000,
+			GB: 1000000000
+		};
+		if (str >= GB) return `${(str / GB).toFixed(precision)} GB`;
+		else if (str >= MB) return `${(str / MB).toFixed(precision)} MB`;
+		else if (str >= KB) return `${(str / KB).toFixed(precision)} KB`;
+		else return `${str} B`;
+	}
 }

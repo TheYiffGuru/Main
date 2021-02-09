@@ -9,6 +9,7 @@ import config from "./config";
 import SessionStore from "./util/SessionStore";
 import PostCSS from "./util/PostCSS";
 import WebhookHandler from "./util/WebhookHandler";
+import * as fs from "fs-extra";
 
 const app = express();
 
@@ -28,7 +29,9 @@ app
 	.set("view engine", "ejs")
 	.set("views", `${config.dir.base}/src/views/templates`)
 	.use(morgan("dev"))
-	.use(express.json())
+	.use(express.json({
+		limit: "30MB"
+	}))
 	.use(express.urlencoded({
 		extended: true
 	}))
@@ -48,7 +51,22 @@ app
 		return next();
 	})
 	.use(express.static(`${config.dir.base}/src/public`))
-	.use(require("./routes").default);
+	.use(require("./routes").default)
+	.use(async (err: Error & { [k: string]: any; }, req: express.Request, res: express.Response, next: express.NextFunction) => {
+		if (err.type) {
+			switch (err.type) {
+				case "entity.too.large": return res.status(413).json({
+					success: false,
+					error: `Whatever you tried to upload was too large. You sent ${err.length.toLocaleString()} bytes. Keep it under ${err.limit.toLocaleString()} bytes.`
+				});
+			}
+		}
+		console.log(err);
+		return res.status(500).json({
+			success: false,
+			error: "We had an unknown internal error."
+		});
+	});
 
 (config.web.ssl ? https : http)
 	.createServer(config.web.opt, app)
@@ -68,6 +86,9 @@ app
 		});
 
 		await PostCSS.compileStyles();
+
+		// make sure temp dir exists
+		fs.mkdirpSync(config.dir.tmp);
 	});
 
 

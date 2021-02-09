@@ -100,7 +100,7 @@ export default class Image {
 	getExt() { return config.mimes[this.file.type]; }
 
 	getViewURL() { return `${config.web.baseURL()}/images/${this.id}`; }
-	getFileURL() { return `${config.web.imageURL(this.album)}/${this.file.md5}.${this.getExt()}`; }
+	getFileURL() { return `${config.web.imageURL(this.album)}/${this.id}.${this.getExt()}`; }
 
 	/**
 	 * Convert this image object image a JSON representation.
