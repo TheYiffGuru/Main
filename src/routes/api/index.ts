@@ -1,6 +1,7 @@
 import express from "express";
 import db from "../../db";
 import { User } from "../../db/models";
+import AuthHandler from "../../util/AuthHandler";
 import { Colors, EMAIL, HANDLE } from "../../util/Constants";
 import Mailer from "../../util/email/Mailer";
 import WebhookHandler from "../../util/WebhookHandler";
@@ -143,7 +144,7 @@ app
 			data: u.toJSON(true)
 		});
 	})
-	.use("/v1", require("./v1").default)
+	.use("/v1", AuthHandler.handle(), require("./v1").default)
 	.use(async (req, res) => res.status(404).json({
 		success: false,
 		error: "Not Found."

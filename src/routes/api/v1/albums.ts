@@ -3,6 +3,7 @@
 import express from "express";
 import db from "../../../db";
 import { Album } from "../../../db/models";
+import AuthHandler from "../../../util/AuthHandler";
 import { ALBUM_TITLE_MAX, Colors, EXTERNAL_LINK_INFO_MAX, EXTERNAL_LINK_TYPES } from "../../../util/Constants";
 import WebhookHandler from "../../../util/WebhookHandler";
 
@@ -25,7 +26,7 @@ app
 		});
 	})
 	// @TODO creation limits
-	.post("/", async (req, res) => {
+	.post("/", AuthHandler.handle(undefined, "verifiedEmail"), async (req, res) => {
 		if (!req.body.title) return res.status(400).json({
 			success: false,
 			error: "Missing album title."

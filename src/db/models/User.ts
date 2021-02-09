@@ -18,7 +18,8 @@ export default class User {
 		avatar: null,
 		password: null,
 		emailVerified: false,
-		externalLinks: []
+		externalLinks: [],
+		apiKey: null
 	};
 
 	/** the id of the user */
@@ -42,6 +43,8 @@ export default class User {
 		type: string;
 		url: string;
 	}[];
+	/** An api key associated with this account. */
+	apiKey: string | null;
 	constructor(id: string, data: UserProperties) {
 		this.id = id;
 		this.load(data);

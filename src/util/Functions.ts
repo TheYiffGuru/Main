@@ -1,5 +1,6 @@
 import crypto from "crypto";
 import * as fs from "fs-extra";
+import { USER_FLAGS } from "./Constants";
 
 type JSONReturn<K extends object, N extends Array<keyof K>, O extends Array<keyof K>, T extends boolean = false> = {
 	[F in (T extends false ? N[number] : (N[number] | O[number]))]: K[F];
@@ -99,5 +100,13 @@ export default class Functions {
 			}))
 			.reduce((a, b) => ({ ...a, ...b })) as JSONReturn<K, N, O, T>;
 		return p;
+	}
+
+	static calcUserFlags(flags: number) {
+		return Object.entries(USER_FLAGS).map(([f, v]) => ({
+			[f]: (flags & v) !== 0
+		})).reduce((a, b) => ({ ...a, ...b }), {}) as {
+				[K in keyof typeof USER_FLAGS]: boolean;
+			};
 	}
 }
