@@ -18,7 +18,13 @@ export default class Verification {
 	static readonly EXPIRE_TIME = 8.64e+7;
 	private static ENTRIES: Map<string, Entry> = new Map();
 	static lastSave: string = new Date().toISOString();
-	static interval: NodeJS.Timeout;
+	static saveInterval: NodeJS.Timeout;
+	static loadInterval: NodeJS.Timeout;
+
+	static loadEntries() {
+		this.ENTRIES = new Map();
+		(fs.readJSONSync(this.FILE) as [key: string, value: Entry][]).map(([a, b]) => this.ENTRIES.set(a, b));
+	}
 
 	static init() {
 		if (!fs.existsSync(this.FILE)) {
@@ -26,13 +32,15 @@ export default class Verification {
 			fs.writeFileSync(this.FILE, JSON.stringify([]));
 		}
 
-		(fs.readJSONSync(this.FILE) as [key: string, value: Entry][]).map(([a, b]) => this.ENTRIES.set(a, b));
-
-		this.interval = setInterval(() => {
+		this.saveInterval = setInterval(() => {
 			for (const [email, { expire }] of this.ENTRIES.entries()) {
 				if (new Date(expire).getTime() < Date.now()) this.remove(email, "TIMEOUT");
 			}
 		}, 1e3);
+
+		// load entries every 30 seconds
+		this.loadInterval = setInterval(this.loadEntries.bind(this), 3e4);
+		this.loadEntries();
 	}
 
 	static save() {
@@ -46,7 +54,7 @@ export default class Verification {
 
 	static get has() { return this.ENTRIES.has.bind(this.ENTRIES); }
 	static get get() { return this.ENTRIES.get.bind(this.ENTRIES); }
-	static getEmailFromToken(token: string) { return Array.from(this.ENTRIES).find(([email, value]) => value.token === token)?.[0]; }
+	static getEmailFromToken(token: string) { return Array.from(this.ENTRIES).find(([email, { token: t }]) => t === token)?.[0]; }
 
 	static add(email: string, user: string, token?: string) {
 		Logger.debug(`MailerVerification->add`, `Added a verification token for "${email}" (U-${user})`);
