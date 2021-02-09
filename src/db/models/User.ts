@@ -110,17 +110,17 @@ export default class User {
 	decodeId() { return Snowflake.decode(this.id); }
 
 	checkPassword(pwd: string) {
-		console.log(pwd, this.password);
 		if (this.password === null) return false;
 		return bcrypt.compareSync(pwd, this.password);
 	}
 
 	setPassword(pwd: string) {
-		console.log(pwd);
 		return this.edit({
 			password: bcrypt.hashSync(pwd, BCRYPT_ROUNDS)
 		});
 	}
+
+
 
 	/**
 	 * Convert this user object into a JSON representation.
