@@ -5,6 +5,7 @@ import Snowflake from "../../util/Snowflake";
 import bcrypt from "bcrypt";
 import Identicon from "identicon.js";
 import Functions from "../../util/Functions";
+import crypto from "crypto";
 
 export type UserProperties = WithoutFunctions<User>;
 export { User };
@@ -120,7 +121,12 @@ export default class User {
 		});
 	}
 
-
+	async resetApiKey() {
+		await this.edit({
+			apiKey: crypto.randomBytes(16).toString("hex")
+		});
+		return this.apiKey!;
+	}
 
 	/**
 	 * Convert this user object into a JSON representation.

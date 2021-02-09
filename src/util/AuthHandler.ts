@@ -54,8 +54,9 @@ export default class AuthHandler {
 				}
 			}
 
-			await AuthHandler.checkLevel(level, req, res);
-
+			const c = await AuthHandler.checkLevel(level, req, res);
+			// don't pass control to further down handlers if we've already ended the request
+			if (c !== undefined) return;
 			return next();
 		}
 	}
