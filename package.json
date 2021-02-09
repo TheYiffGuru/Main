@@ -7,7 +7,8 @@
     "dev": "npm run build && node index.js",
     "start": "npm run files && echo Files Copied && node index.js",
     "ssl": "sh src/config/ssl/update.sh",
-    "files": "rm -rf /var/www/static && cp -r src/public/static /var/www/"
+    "files": "rm -rf /var/www/static && cp -r src/public/static /var/www/",
+    "setup-db": "ts-node scripts/setup-db.ts"
   },
   "dependencies": {
     "autoprefixer": "^10.2.4",
