@@ -4,19 +4,33 @@ A website consisting of collections of comics.
 You can find us in our [Discord Server](https://discord.gg/bq8GC8XJ2p)
 
 ## TODO
-### User/Frontend
-- [ ] Completely new frontend that actually works
-- [ ] Password resets
-- [ ] Resend email verification 
-- [ ] Edit profile
 
-### API/Backend
-- [ ] Allow general creation of artist entries
-- [x] ~~Make artists different for each image~~ (changed to below)
-- [x] Create "mixed-artists" user for albums with more than one artist
-- [x] Album descriptions
-- [ ] Modify albums
-- [ ] Delete albums
-- [ ] Modify images
-- [ ] Delete images
-- [ ] Allow bulk adding images (zip?)
+#### Frontend/Design
+- [ ] Completely new frontend that actually works
+---
+#### Users
+- [X] Registration
+- [X] Login
+- [ ] Password Resets
+- [ ] Resend Email Verification
+- [ ] Modify User Profile
+- [ ] User Deletion (7 days self, instant admin)
+- [ ] Login/Register with other services 
+---
+#### Posts
+- [ ] Create Posts
+- [ ] Flag Posts
+- [ ] Modify Posts
+- [ ] Delete Posts (staff only)
+---
+#### Sets
+- [ ] Create Sets
+- [ ] Flag Sets
+- [ ] Modify Sets
+- [ ] Delete Sets (creator if empty, else staff only)
+---
+#### Tags
+- [ ] Tagging Rules
+- [ ] Create tags (general)
+- [ ] Artist, Character, and Copyright tags (staff creation)
+- [ ] Tag wiki pages (?)
