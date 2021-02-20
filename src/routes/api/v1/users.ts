@@ -5,6 +5,11 @@ const app = express.Router();
 
 app
 	.get("/:id", async (req, res) => {
+		if (req.params.id.toLowerCase() === "@me") return res.status(200).json({
+			success: true,
+			data: req.data.user!.toJSON(true)
+		});
+
 		const v = await db.get("user", {
 			id: req.params.id
 		});

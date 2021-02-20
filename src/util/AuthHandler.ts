@@ -1,17 +1,54 @@
 /// <reference path="./@types/Express.d.ts" />
 import express from "express";
 import db from "../db";
+import { User } from "../db/models";
 import Functions from "./Functions";
 
 export type AuthLevel = "none" | "verifiedEmail" | "staff" | "admin";
 
 // this has to be separated from normal functions because of circular imports with Logger & db
 export default class AuthHandler {
-	static handle(type?: "session" | "key", level?: AuthLevel | AuthLevel[]) {
+	static handle(type?: "token" | "key", level?: AuthLevel | AuthLevel[]) {
 		return async function (req: express.Request, res: express.Response, next: express.NextFunction) {
 			switch (type) {
-				case "session": {
-					if (req.data.user === null) return res.status(401).render("errors/401");
+				// I could have done a direct lookup for tokens via "authTokens.token": "" but I wanted to easilt distinguish
+				// api keys & site users 
+				// auth is Basic Authentication with handle:token 
+				case "token": {
+					if (!req.headers.authorization) return res.status(401).json({
+						success: false,
+						error: "Missing Authorization."
+					});
+
+					const [type, auth] = req.headers.authorization.toString().split(" ") ?? [];
+					if (type.toLowerCase() !== "basic") return res.status(400).json({
+						success: false,
+						error: "Unknown authentication scheme."
+					});
+
+					const [handle, token] = Buffer.from(auth, "base64").toString("ascii").split(":") ?? [];
+
+					if (handle === undefined || token === undefined) return res.status(400).json({
+						success: false,
+						error: "Badly formed authentication."
+					});
+
+					const u = await db.get("user", {
+						handle
+					});
+
+					if (u === null) return res.status(400).json({
+						success: false,
+						error: "Invalid user in authentication."
+					});
+
+					if (!u.authTokens.map(({ token: t }) => t).includes(token)) return res.status(401).json({
+						success: false,
+						error: "Invalid authentication."
+					});
+
+					req.data.user = u;
+
 					break;
 				}
 
@@ -34,23 +71,47 @@ export default class AuthHandler {
 				}
 
 				default: {
-					if (req.data.user === null) {
-						if (!req.headers.authorization) return res.status(401).json({
+					if (!req.headers.authorization) return res.status(401).json({
+						success: false,
+						error: "Missing authorization."
+					});
+
+					// try api key first
+					let u: User | null;
+					u = await db.get("user", {
+						apiKey: req.headers.authorization
+					});
+
+					if (u === null || u.apiKey === null) {
+						const [type, auth] = req.headers.authorization.toString().split(" ") ?? [];
+						if (type.toLowerCase() !== "basic") return res.status(400).json({
 							success: false,
-							error: "Missing authorization."
+							error: "Unknown authentication scheme."
 						});
 
-						const u = await db.get("user", {
-							apiKey: req.headers.authorization
-						});
+						const [handle, token] = Buffer.from(auth, "base64").toString("ascii").split(":") ?? [];
 
-						if (u === null || u.apiKey === null) return res.status(401).json({
+						if (handle === undefined || token === undefined) return res.status(400).json({
 							success: false,
-							error: "Invalid authorization."
+							error: "Badly formed authentication."
 						});
 
-						req.data.user = u;
+						u = await db.get("user", {
+							handle
+						});
+
+						if (u === null) return res.status(400).json({
+							success: false,
+							error: "Invalid user in authentication."
+						});
+
+						if (!u.authTokens.map(({ token: t }) => t).includes(token)) return res.status(401).json({
+							success: false,
+							error: "Invalid authentication."
+						});
 					}
+
+					req.data.user = u;
 				}
 			}
 

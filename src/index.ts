@@ -1,33 +1,15 @@
 import express from "express";
 import morgan from "morgan";
-import onFinished from "on-finished";
-import session from "express-session";
 import * as http from "http";
 import * as https from "https";
 import dns from "dns";
 import config from "./config";
-import SessionStore from "./util/SessionStore";
-import PostCSS from "./util/PostCSS";
 import WebhookHandler from "./util/WebhookHandler";
 import * as fs from "fs-extra";
 
 const app = express();
 
 app
-	.use(session({
-		name: "yiff",
-		secret: config.web.cookieSecret,
-		cookie: {
-			domain: config.web.domains.current,
-			secure: true,
-			httpOnly: true,
-			maxAge: 8.64e7,
-		},
-		resave: false,
-		saveUninitialized: true
-	}))
-	.set("view engine", "ejs")
-	.set("views", `${config.dir.base}/src/views/templates`)
 	.use(morgan("dev"))
 	.use(express.json({
 		limit: "30MB"
@@ -36,21 +18,11 @@ app
 		extended: true
 	}))
 	.use(async (req, res, next) => {
-		if (req.session.id) {
-			req.data = SessionStore.get(req.session.id);
-			onFinished(res, () =>
-				SessionStore.set(req.sessionID, req.data)
-			);
-		}
-
-		if (req.data.user === undefined) req.data.user = null;
-
-		res.locals.user = req.data.user;
-		res.locals.baseDomain = config.web.domains.current;
-
+		// we don't store this anymore, since that would be insecure for api access,
+		// but we still need to set the data object
+		req.data = {};
 		return next();
 	})
-	.use(express.static(`${config.dir.base}/src/public`))
 	.use(require("./routes").default)
 	.use(async (err: Error & { [k: string]: any; }, req: express.Request, res: express.Response, next: express.NextFunction) => {
 		if (err.type) {
@@ -84,8 +56,6 @@ app
 			color: 0x00A000,
 			timestamp: new Date().toISOString()
 		});
-
-		await PostCSS.compileStyles();
 
 		// make sure temp dir exists
 		fs.mkdirpSync(config.dir.tmp);

@@ -4,14 +4,6 @@ node_modules/
 build/
 # log files
 logs/
-# compiled scripts
-src/public/static/scripts/*.js
-# album images (dev)
-src/public/albums/*
-!src/public/albums/.gitkeep
-# compiled styles
-src/public/static/styles/*
-!src/public/static/styles/.gitkeep
 # test files
 test/
 # dev config files

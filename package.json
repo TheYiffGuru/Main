@@ -4,21 +4,17 @@
   "scripts": {
     "update": "npm update && npm update -D",
     "build": "rm -rf build && tsc && echo Build Finished",
-    "dev": "npm run build && node index.js",
-    "start": "npm run files && echo Files Copied && node index.js",
+    "start:dev": "npm run build && node index.js",
+    "start": "node index.js",
     "ssl": "sh src/config/ssl/update.sh",
-    "files": "rm -rf /var/www/static && cp -r src/public/static /var/www/",
     "setup-db": "ts-node scripts/setup-db.ts"
   },
   "dependencies": {
-    "autoprefixer": "^10.2.4",
     "bcrypt": "^5.0.0",
     "chunk": "^0.0.3",
     "deasync": "^0.1.21",
-    "ejs": "^3.1.6",
     "eris": "^0.14.0",
     "express": "^4.17.1",
-    "express-session": "^1.17.1",
     "express-subdomain": "^1.0.5",
     "file-type": "^16.2.0",
     "fs-extra": "^9.1.0",
@@ -29,11 +25,8 @@
     "morgan": "^1.10.0",
     "node-fetch": "^2.6.1",
     "nodemailer": "^6.4.17",
-    "on-finished": "^2.3.0",
-    "postcss": "^8.2.5",
-    "postcss-import": "^14.0.0",
     "suppress-warnings": "^1.0.2",
-    "tailwindcss": "^2.0.3"
+    "ua-parser-js": "^0.7.24"
   },
   "devDependencies": {
     "@types/bcrypt": "^3.0.0",
@@ -51,6 +44,7 @@
     "@types/node-fetch": "^2.5.8",
     "@types/nodemailer": "^6.4.0",
     "@types/on-finished": "^2.3.1",
+    "@types/ua-parser-js": "^0.7.35",
     "@typescript-eslint/eslint-plugin": "^4.15.0",
     "@typescript-eslint/parser": "^4.15.0",
     "eslint": "^7.19.0",

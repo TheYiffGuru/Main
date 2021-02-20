@@ -1,7 +1,0 @@
-<%- include("../../partials/header.ejs", { title: `${locals.title} by ${locals.artist.name}` }) %>
-
-<div id="image-list">
-	<%- locals.images.map((img, i) => include("../../partials/image.ejs", { ...img, pos: i})).join("") %>
-</div>
-
-<%- include("../../partials/footer.ejs") %>

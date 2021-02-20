@@ -4,6 +4,7 @@ import { User } from "../../db/models";
 import AuthHandler from "../../util/AuthHandler";
 import { Colors, EMAIL, HANDLE } from "../../util/Constants";
 import Mailer from "../../util/email/Mailer";
+import Verification from "../../util/email/Verification";
 import WebhookHandler from "../../util/WebhookHandler";
 
 const app = express.Router();
@@ -63,11 +64,9 @@ app
 			error: "Incorrect password."
 		});
 
-		req.data.user = u;
-
 		return res.status(200).json({
 			success: true,
-			data: u.toJSON(true)
+			data: await u.createAuthToken(req.ip, req.headers["user-agent"])
 		});
 	})
 	.post("/register", async (req, res) => {
@@ -127,8 +126,6 @@ app
 
 		await Mailer.sendConfirmation(u);
 
-		req.data.user = u;
-
 		await WebhookHandler.executeDiscord("user", {
 			title: "User Registered",
 			color: Colors.green,
@@ -141,9 +138,42 @@ app
 
 		return res.status(201).json({
 			success: true,
-			data: u.toJSON(true)
+			data: await u.createAuthToken(req.ip, req.headers["user-agent"])
 		});
 	})
+	.get("/confirm-email", async (req, res) => {
+		const t = req.query.token?.toString();
+		if (t === undefined) return res.status(404).end("Missing confirmation token.");
+
+		const e = Verification.getEmailFromToken(t);
+		const v = Verification.get(e!);
+
+		if (e === undefined || v === undefined) return res.status(404).end("Unknown confirmation token.");
+
+		const u = await db.get("user", {
+			id: v.user
+		});
+
+		if (u === null) return res.status(404).end("Unknown user.");
+
+		await u.edit({
+			emailVerified: true
+		});
+
+		Verification.remove(e, "USED");
+
+		return res.status(200).end("Your email has been confirmed. You can now close this page.");
+	})
+	.get("/test", async (req, res) => res.status(200).json({
+		success: true,
+		data: {
+			session: {
+				id: req.sessionID,
+				sess: req.session,
+				data: req.data
+			}
+		}
+	}))
 	.use("/v1", AuthHandler.handle(), require("./v1").default)
 	.use(async (req, res) => res.status(404).json({
 		success: false,

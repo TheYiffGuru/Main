@@ -6,6 +6,7 @@ import bcrypt from "bcrypt";
 import Identicon from "identicon.js";
 import Functions from "../../util/Functions";
 import crypto from "crypto";
+import UserAgent, { IBrowser } from "ua-parser-js";
 
 export type UserProperties = WithoutFunctions<User>;
 export { User };
@@ -20,7 +21,8 @@ export default class User {
 		password: null,
 		emailVerified: false,
 		externalLinks: [],
-		apiKey: null
+		apiKey: null,
+		authTokens: []
 	};
 
 	/** the id of the user */
@@ -46,6 +48,17 @@ export default class User {
 	}[];
 	/** An api key associated with this account. */
 	apiKey: string | null;
+	authTokens: {
+		ip: string;
+		userAgent: string | undefined;
+		token: string;
+		creation: string;
+		device: {
+			browser: Omit<IBrowser, "major">;
+			type: string;
+			name: string;
+		} | undefined;
+	}[];
 	constructor(id: string, data: UserProperties) {
 		this.id = id;
 		this.load(data);
@@ -128,6 +141,58 @@ export default class User {
 		return this.apiKey!;
 	}
 
+	async createAuthToken(ip: string, userAgent?: string) {
+		const token = crypto.randomBytes(32).toString("hex");
+		let d: User["authTokens"][number]["device"];
+		if (userAgent !== undefined) {
+			const { ua, browser, engine, os, device, cpu } = new UserAgent(userAgent).getResult();
+			// we don't need this
+			delete browser.major;
+			d = {
+				browser,
+				type: device.type ?? "desktop",
+				name: os.name ?? "Unknown"
+			};
+		}
+		await this.mongoEdit({
+			$push: {
+				authTokens: {
+					ip,
+					userAgent,
+					token,
+					creation: new Date().toISOString(),
+					device: d
+				}
+			}
+		});
+		return token;
+	}
+
+	async deleteAuthToken(token: string) {
+		if (this.authTokens.find(({ token: t }) => t === token) === undefined) return false;
+		await this.mongoEdit({
+			$pull: {
+				authTokens: this.authTokens.find(({ token: t }) => t === token)
+			}
+		});
+		return true;
+	}
+
+	async deleteAllTokens() {
+		if (this.authTokens.length === 0) return false;
+		await this.mongoEdit({
+			$set: {
+				authTokens: []
+			}
+		});
+		return true;
+	}
+
+	async getAuth(t: string) {
+		// padding isn't REQUIRED, so we remove it so we don't have to encode & decode later
+		return Buffer.from(`${this.handle}:${t}`, "ascii").toString("base64").replace(/=/g, "");
+	}
+
 	/**
 	 * Convert this user object into a JSON representation.
 	 * @param {boolean} [privateProps=false] - If we should return more private properties. 
@@ -147,7 +212,8 @@ export default class User {
 			],
 			[
 				"email",
-				"emailVerified"
+				"emailVerified",
+				"apiKey"
 			],
 			privateProps
 		);

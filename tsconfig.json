@@ -13,14 +13,15 @@
         "inlineSourceMap": true,
         "charset": "UTF-8",
         "downlevelIteration": true,
-        "newLine": "lf" ,
+        "newLine": "lf",
         "strict": true,
         "strictPropertyInitialization": false,
         "strictBindCallApply": true,
-        "skipLibCheck": true
+        "skipLibCheck": true,
+        "jsx": "react"
     },
     "include": [
-		"**/*"
+        "**/*"
     ],
     "exclude": [
         "node_modules",
