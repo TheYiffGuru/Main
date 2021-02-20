@@ -1,10 +1,8 @@
 import { mdb } from "../src/db";
 import { User } from "../src/db/models";
 import { USER_FLAGS } from "../src/util/Constants";
-import * as fs from "fs-extra";
-import config from "../src/config";
 
-const drop = true, removeFiles = true;
+const drop = true;
 
 async function setupAlbums() {
 	const col = mdb.collection("albums");
@@ -126,6 +124,30 @@ async function setupUsers() {
 			}
 		},
 		{
+			name: "apiKey",
+			key: {
+				apiKey: 1
+			},
+			unique: true,
+			partialFilterExpression: {
+				apiKey: {
+					$type: "string"
+				}
+			}
+		},
+		{
+			name: "authTokens.token",
+			key: {
+				"authTokens.token": 1
+			},
+			unique: true,
+			partialFilterExpression: {
+				"authTokens.token": {
+					$type: "string"
+				}
+			}
+		},
+		{
 			name: "name",
 			key: {
 				name: 1
@@ -166,26 +188,6 @@ process.nextTick(async () => {
 		email: "anonymous@yiff.guru",
 		emailVerified: true
 	}).then(u => console.log(`Added anonymous user (id: ${u.id})`));
-
-	await User.create({
-		flags: USER_FLAGS.ARTIST,
-		handle: "mixed-artists",
-		name: "Mixed Artists",
-		email: "mixed-artists@yiff.guru",
-		emailVerified: true
-	}).then(u => console.log(`Added mixed-artists user (id: ${u.id})`));
-
-	if (removeFiles) {
-		fs.readdirSync(config.dir.albums).map(v => {
-			if (v === ".gitkeep") return;
-			else {
-				fs.rmSync(`${config.dir.albums}/${v}`, {
-					recursive: true
-				});
-			}
-		});
-		console.log(`Removed old image files.`);
-	}
 
 	process.exit(0);
 });
