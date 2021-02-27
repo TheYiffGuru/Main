@@ -111,7 +111,7 @@ app
 			error: "That email is already in use."
 		});
 
-		const u = await db.create("user", {
+		const u = await User.new({
 			email: req.body.email,
 			handle: req.body.handle.toLowerCase(),
 			name: req.body.handle.toLowerCase()

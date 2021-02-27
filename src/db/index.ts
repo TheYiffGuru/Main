@@ -80,47 +80,7 @@ class Database {
 		return this.mdb.collection(col);
 	}
 
-	/**
-	 * @deprecated use static methods on classes
-	 */
-	static async get(type: Plural<"album">, data: FilterQuery<GetAlbumOptions>): Promise<Album | null>;
-	/**
-	 * @deprecated use static methods on classes
-	 */
-	static async get(type: Plural<"image">, data: FilterQuery<GetImageOptions>): Promise<Image | null>;
-	/**
-	 * @deprecated use static methods on classes
-	 */
-	static async get(type: Plural<"user">, data: FilterQuery<GetUserOptions>): Promise<User | null>;
-	static async get(type: Names | CollectionNames, data: object) {
-		switch (type) {
-			case "album": case "albums": return Album.getAlbum(data);
-			case "image": case "images": return Image.getImage(data);
-			case "user": case "users": return User.getUser(data);
-			default: return null;
-		}
-	}
-
-	/**
-	 * @deprecated use static methods on classes
-	 */
-	static async create(type: Plural<"album">, data: CreateAlbumOptions): Promise<Album | null>;
-	/**
-	 * @deprecated use static methods on classes
-	 */
-	static async create(type: Plural<"image">, data: CreateImageOptions): Promise<Image | null>;
-	/**
-	 * @deprecated use static methods on classes
-	 */
-	static async create(type: Plural<"user">, data: CreateUserOptions): Promise<User | null>;
-	static async create(type: Names | CollectionNames, data: object) {
-		switch (type) {
-			case "album": case "albums": return Album.new(data);
-			case "image": case "images": return Image.new(data);
-			case "user": case "users": return User.new(data);
-			default: return null;
-		}
-	}
+	// get/create: https://github.com/TheYiffGuru/Main/blob/81b7e92eed1e9d402bfc2a1b6cd9d3e109150fe2/src/db/index.ts#L78-L101
 }
 
 Database.init();
