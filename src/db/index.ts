@@ -57,20 +57,6 @@ class Database {
 	static get mongo() { return this.connection; }
 	static get mdb() { return this.mongo.db(config.services.db.db); }
 
-	static async executeRedisQuery<K extends keyof IORedis.Commands, V = string>(cmd: K, ...args: Parameters<IORedis.Commands[K]>): Promise<V | null> {
-		const start = performance.now();
-		let v: V;
-		try {
-			v = await this.r.send_command(cmd, ...args as any);
-		} catch (e) {
-			Logger.error("Redis", e);
-			return null;
-		}
-		const end = performance.now();
-		Logger.error(["Redis", `${cmd.toUpperCase()} ${args[0]}`], parseFloat((end - start).toFixed(3)));
-		return v || null;
-	}
-
 	static collection(col: "albums"): Collection<WithId<AlbumProperties>>;
 	static collection(col: "images"): Collection<WithId<ImageProperties>>;
 	static collection(col: "users"): Collection<WithId<UserProperties>>;
@@ -85,11 +71,12 @@ class Database {
 
 Database.init();
 
-const { mongo, mdb } = Database;
+const { mongo, mdb, Redis } = Database;
 
 export {
 	Database as db,
 	mdb,
-	mongo
+	mongo,
+	Redis
 };
 export default Database;
