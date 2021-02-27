@@ -1,9 +1,11 @@
-import { FindOneAndUpdateOption, UpdateQuery } from "mongodb";
+import { FilterQuery, FindOneAndUpdateOption, UpdateQuery } from "mongodb";
 import db, { mdb } from "..";
 import Snowflake from "../../util/Snowflake";
 import Functions from "../../util/Functions";
 import { RATINGS } from "../../util/Constants";
 import config from "../../config";
+import { GetImageOptions } from "../../util/@types/Database";
+import { DeepPartial, Nullable, WithoutFunctions } from "../../util/@types/Utilities";
 
 export type ImageProperties = WithoutFunctions<Image>;
 export { Image };
@@ -50,21 +52,6 @@ export default class Image {
 				Image.DEFAULTS
 			)
 		);
-	}
-
-	static async get(id: string) { return db.get("images", { id }); }
-	static async create(data: Omit<Nullable<DeepPartial<ImageProperties>>, "id">) {
-		const id = Snowflake.generate();
-
-		return db.collection("images").insertOne(
-			Functions.mergeObjects<any, any>(
-				{
-					...data,
-					id
-				},
-				this.DEFAULTS
-			)
-		).then(({ ops: [v] }) => new Image(id, v));
 	}
 
 	async refresh() {
@@ -122,6 +109,22 @@ export default class Image {
 			value: new Date(Snowflake.decode(this.id).timestamp).toISOString()
 		});
 		return t as typeof t & { createdAt: string; };
+	}
+
+	static isImage(obj: any): obj is Image { return obj instanceof Image; }
+	static async getImage(data: string | FilterQuery<GetImageOptions>) { return db.collection("images").findOne(typeof data === "string" ? { id: data } : (data as object)).then(d => d ? new Image(d.id, d) : null) }
+	static async new(data: Omit<Nullable<DeepPartial<ImageProperties>>, "id">) {
+		const id = Snowflake.generate();
+
+		return db.collection("images").insertOne(
+			Functions.mergeObjects<any, any>(
+				{
+					...data,
+					id
+				},
+				this.DEFAULTS
+			)
+		).then(({ ops: [v] }) => new Image(id, v));
 	}
 }
 

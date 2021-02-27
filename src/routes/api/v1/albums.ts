@@ -1,7 +1,6 @@
 /// <reference path="../../../util/@types/Express.d.ts" />
 import express from "express";
-import db from "../../../db";
-import { Album } from "../../../db/models";
+import { Album, Image, User } from "../../../db/models";
 import AuthHandler from "../../../util/AuthHandler";
 import { ORIGINAL_NAME_MAX, ALBUM_TITLE_MAX, Colors, EXTERNAL_LINK_INFO_MAX, EXTERNAL_LINK_TYPES, RATINGS, DESCRIPTION_MAX_LENGTH } from "../../../util/Constants";
 import WebhookHandler from "../../../util/WebhookHandler";
@@ -15,7 +14,7 @@ const app = express.Router();
 
 app
 	.get("/:id", async (req, res) => {
-		const v = await db.get("album", {
+		const v = await Album.getAlbum({
 			$or: [
 				{
 					id: req.params.id
@@ -88,7 +87,7 @@ app
 			}) as Album["externalLinks"];
 		}
 
-		const ar = req.body.artist ? await db.collection("users").findOne({
+		const ar = await (req.body.artist ? User.getUser({
 			$or: [
 				{
 					id: req.body.artist
@@ -97,14 +96,14 @@ app
 					handle: req.body.artist
 				}
 			]
-		}) : null;
+		}) : null);
 
 		if (req.body.artist && !ar) return res.status(400).json({
 			success: false,
 			error: "Unknown artist."
 		});
 
-		const a = await db.create("album", {
+		const a = await Album.new({
 			title: req.body.title,
 			tags: !req.body.tags || !Array.isArray(req.body.tags) ? req.body.tags : [],
 			creator: req.data.user!.id,
@@ -121,7 +120,7 @@ app
 		});
 
 		let at: Exclude<typeof ar, null>;
-		if (ar === null) at = await db.collection("users").findOne({ handle: "anonymous" }) as typeof at;
+		if (ar === null) at = await User.getUser({ handle: "anonymous" }) as User;
 		else at = ar;
 
 		await WebhookHandler.executeDiscord("album", {
@@ -148,7 +147,7 @@ app
 		})
 	})
 	.put("/:id/images", AuthHandler.handle(undefined, "verifiedEmail"), async (req, res) => {
-		const a = await db.get("album", {
+		const a = await Album.getAlbum({
 			$or: [
 				{
 					id: req.params.id
@@ -201,7 +200,7 @@ app
 
 		const md5 = Functions.md5File(tmp);
 
-		const d = await db.collection("images").findOne({
+		const d = await Image.getImage({
 			"file.md5": md5
 		});
 
@@ -210,7 +209,7 @@ app
 			error: "An image already exists with the same md5."
 		});
 
-		const img = await db.create("image", {
+		const img = await Image.new({
 			uploader: req.data.user!.id,
 			album: a.id,
 			rating,

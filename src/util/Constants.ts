@@ -53,7 +53,5 @@ export const Colors = {
 	cyan: 0x00FFFF,
 	teal: 0x008080,
 	blue: 0x0000FF,
-	get random() {
-		return Math.floor(Math.random() * 0xFFFFFF);
-	}
+	get random() { return Math.floor(Math.random() * 0xFFFFFF); }
 };

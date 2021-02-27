@@ -1,6 +1,5 @@
 /// <reference path="./@types/Express.d.ts" />
 import express from "express";
-import db from "../db";
 import { User } from "../db/models";
 import Functions from "./Functions";
 
@@ -33,7 +32,7 @@ export default class AuthHandler {
 						error: "Badly formed authentication."
 					});
 
-					const u = await db.get("user", {
+					const u = await User.getUser({
 						handle
 					});
 
@@ -58,7 +57,7 @@ export default class AuthHandler {
 						error: "Missing authorization."
 					});
 
-					const u = await db.get("user", {
+					const u = await User.getUser({
 						apiKey: req.headers.authorization
 					});
 
@@ -78,7 +77,7 @@ export default class AuthHandler {
 
 					// try api key first
 					let u: User | null;
-					u = await db.get("user", {
+					u = await User.getUser({
 						apiKey: req.headers.authorization
 					});
 
@@ -96,7 +95,7 @@ export default class AuthHandler {
 							error: "Badly formed authentication."
 						});
 
-						u = await db.get("user", {
+						u = await User.getUser({
 							handle
 						});
 

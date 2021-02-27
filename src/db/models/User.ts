@@ -1,4 +1,4 @@
-import { FindOneAndUpdateOption, UpdateQuery } from "mongodb";
+import { FilterQuery, FindOneAndUpdateOption, UpdateQuery } from "mongodb";
 import db, { mdb } from "..";
 import { BCRYPT_ROUNDS } from "../../util/Constants";
 import Snowflake from "../../util/Snowflake";
@@ -7,6 +7,8 @@ import Identicon from "identicon.js";
 import Functions from "../../util/Functions";
 import crypto from "crypto";
 import UserAgent, { IBrowser } from "ua-parser-js";
+import { GetUserOptions } from "../../util/@types/Database";
+import { DeepPartial, Nullable, WithoutFunctions } from "../../util/@types/Utilities";
 
 export type UserProperties = WithoutFunctions<User>;
 export { User };
@@ -73,21 +75,6 @@ export default class User {
 				User.DEFAULTS
 			)
 		);
-	}
-
-	static async get(id: string) { return db.get("users", { id }); }
-	static async create(data: Omit<Nullable<DeepPartial<UserProperties>>, "id">) {
-		const id = Snowflake.generate();
-
-		return db.collection("users").insertOne(
-			Functions.mergeObjects<any, any>(
-				{
-					...data,
-					id
-				},
-				this.DEFAULTS
-			)
-		).then(({ ops: [v] }) => new User(id, v));
 	}
 
 	async refresh() {
@@ -221,6 +208,22 @@ export default class User {
 			value: new Date(Snowflake.decode(this.id).timestamp).toISOString()
 		});
 		return t as typeof t & { createdAt: string; };
+	}
+
+	static isUser(obj: unknown): obj is User { return obj instanceof User; }
+	static async getUser(data: string | FilterQuery<GetUserOptions>) { return db.collection("users").findOne(typeof data === "string" ? { id: data } : (data as object)).then(d => d ? new User(d.id, d) : null) }
+	static async new(data: Omit<Nullable<DeepPartial<UserProperties>>, "id">) {
+		const id = Snowflake.generate();
+
+		return db.collection("users").insertOne(
+			Functions.mergeObjects<any, any>(
+				{
+					...data,
+					id
+				},
+				this.DEFAULTS
+			)
+		).then(({ ops: [v] }) => new User(id, v));
 	}
 }
 

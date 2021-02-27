@@ -1,9 +1,12 @@
-import { FindOneAndUpdateOption, UpdateQuery } from "mongodb";
+import { FilterQuery, FindOneAndUpdateOption, UpdateQuery } from "mongodb";
 import db, { mdb } from "..";
 import Snowflake from "../../util/Snowflake";
 import Functions from "../../util/Functions";
 import Image from "./Image";
 import { EXTERNAL_LINK_TYPES } from "../../util/Constants";
+import { GetAlbumOptions } from "../../util/@types/Database";
+import { DeepPartial, Nullable, ThenReturnType, WithoutFunctions } from "../../util/@types/Utilities";
+import User from "./User";
 
 export type AlbumProperties = WithoutFunctions<Album>;
 export { Album };
@@ -64,21 +67,6 @@ export default class Album {
 		);
 	}
 
-	static async get(id: string) { return db.get("albums", { id }); }
-	static async create(data: Omit<Nullable<DeepPartial<AlbumProperties>>, "id">) {
-		const id = Snowflake.generate();
-
-		return db.collection("albums").insertOne(
-			Functions.mergeObjects<any, any>(
-				{
-					...data,
-					id
-				},
-				this.DEFAULTS
-			)
-		).then(({ ops: [v] }) => new Album(id, v));
-	}
-
 	async refresh() {
 		const r = await db.collection("albums").findOne({ id: this.id });
 		if (r === null) throw new TypeError("Unexpected null on refresh");
@@ -110,7 +98,7 @@ export default class Album {
 
 	async getImages(): Promise<(Image & Album["images"][number])[] & { order: (dir?: "desc" | "asc") => Image[]; }> {
 		const img: ThenReturnType<Album["getImages"]> = await Promise.all(
-			this.images.map(async ({ id }) => db.get("images", { id }))
+			this.images.map(async ({ id }) => Image.getImage({ id }))
 		).then(img => (img.filter(v => v !== null) as Image[]).map(v => Object.assign(v, this.images.find(i => i.id === v.id)))) as any;
 		if (!img.order) Object.defineProperty(img, "order", {
 			value(this: typeof img, dir?: "desc" | "asc") { return this.sort((a, b) => dir === "desc" ? b.pos - a.pos : a.pos - b.pos); }
@@ -119,7 +107,7 @@ export default class Album {
 		return img;
 	}
 
-	async getArtist() { return this.artist === null ? null : db.get("user", { id: this.artist }); }
+	async getArtist() { return this.artist === null ? null : User.getUser({ id: this.artist }); }
 
 	/**
 	 * Convert this album object image a JSON representation.
@@ -145,6 +133,22 @@ export default class Album {
 			value: new Date(Snowflake.decode(this.id).timestamp).toISOString()
 		});
 		return t as typeof t & { createdAt: string; };
+	}
+
+	static isAlbum(obj: any): obj is Album { return obj instanceof Album; }
+	static async getAlbum(data: string | FilterQuery<GetAlbumOptions>) { return db.collection("albums").findOne(typeof data === "string" ? { id: data } : (data as object)).then(d => d ? new Album(d.id, d) : null) }
+	static async new(data: Omit<Nullable<DeepPartial<AlbumProperties>>, "id">) {
+		const id = Snowflake.generate();
+
+		return db.collection("albums").insertOne(
+			Functions.mergeObjects<any, any>(
+				{
+					...data,
+					id
+				},
+				this.DEFAULTS
+			)
+		).then(({ ops: [v] }) => new Album(id, v));
 	}
 }
 

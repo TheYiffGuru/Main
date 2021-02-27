@@ -1,6 +1,6 @@
 import "node";
 
-declare global {
+declare namespace Utilities {
 	type ArrayOneOrMore<T> = T[] & {
 		0: T;
 	};
@@ -48,3 +48,5 @@ declare global {
 
 	type Plural<T extends string> = T | `${T}s`;
 }
+
+export = Utilities;

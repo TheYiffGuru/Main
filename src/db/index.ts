@@ -1,4 +1,3 @@
-/// <reference path="../util/@types/Database.d.ts" />
 import { Collection, MongoClient, WithId, FilterQuery } from "mongodb";
 import config from "../config";
 import Logger from "../util/Logger";
@@ -10,6 +9,12 @@ import {
 	Image, ImageProperties,
 	User, UserProperties
 } from "./models";
+import {
+	CreateAlbumOptions, GetAlbumOptions,
+	CreateImageOptions, GetImageOptions,
+	CreateUserOptions, GetUserOptions
+} from "../util/@types/Database";
+import { Plural } from "../util/@types/Utilities";
 
 
 export type Names = "album" | "image" | "user";
@@ -75,26 +80,44 @@ class Database {
 		return this.mdb.collection(col);
 	}
 
-	static async get(type: Plural<"album">, data: FilterQuery<Database.GetAlbumOptions>): Promise<Album | null>;
-	static async get(type: Plural<"image">, data: FilterQuery<Database.GetImageOptions>): Promise<Image | null>;
-	static async get(type: Plural<"user">, data: FilterQuery<Database.GetUserOptions>): Promise<User | null>;
+	/**
+	 * @deprecated use static methods on classes
+	 */
+	static async get(type: Plural<"album">, data: FilterQuery<GetAlbumOptions>): Promise<Album | null>;
+	/**
+	 * @deprecated use static methods on classes
+	 */
+	static async get(type: Plural<"image">, data: FilterQuery<GetImageOptions>): Promise<Image | null>;
+	/**
+	 * @deprecated use static methods on classes
+	 */
+	static async get(type: Plural<"user">, data: FilterQuery<GetUserOptions>): Promise<User | null>;
 	static async get(type: Names | CollectionNames, data: object) {
 		switch (type) {
-			case "album": case "albums": return this.collection("albums").findOne(data).then(d => d ? new Album(d.id, d) : null);
-			case "image": case "images": return this.collection("images").findOne(data).then(d => d ? new Image(d.id, d) : null);
-			case "user": case "users": return this.collection("users").findOne(data).then(d => d ? new User(d.id, d) : null);
+			case "album": case "albums": return Album.getAlbum(data);
+			case "image": case "images": return Image.getImage(data);
+			case "user": case "users": return User.getUser(data);
 			default: return null;
 		}
 	}
 
-	static async create(type: Plural<"album">, data: Database.CreateAlbumOptions): Promise<Album | null>;
-	static async create(type: Plural<"image">, data: Database.CreateImageOptions): Promise<Image | null>;
-	static async create(type: Plural<"user">, data: Database.CreateUserOptions): Promise<User | null>;
+	/**
+	 * @deprecated use static methods on classes
+	 */
+	static async create(type: Plural<"album">, data: CreateAlbumOptions): Promise<Album | null>;
+	/**
+	 * @deprecated use static methods on classes
+	 */
+	static async create(type: Plural<"image">, data: CreateImageOptions): Promise<Image | null>;
+	/**
+	 * @deprecated use static methods on classes
+	 */
+	static async create(type: Plural<"user">, data: CreateUserOptions): Promise<User | null>;
 	static async create(type: Names | CollectionNames, data: object) {
 		switch (type) {
-			case "album": case "albums": return Album.create(data);
-			case "image": case "images": return Image.create(data);
-			case "user": case "users": return User.create(data);
+			case "album": case "albums": return Album.new(data);
+			case "image": case "images": return Image.new(data);
+			case "user": case "users": return User.new(data);
 			default: return null;
 		}
 	}

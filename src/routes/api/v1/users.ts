@@ -1,5 +1,6 @@
 import express from "express";
 import db from "../../../db";
+import { User } from "../../../db/models";
 
 const app = express.Router();
 
@@ -10,9 +11,7 @@ app
 			data: req.data.user!.toJSON(true)
 		});
 
-		const v = await db.get("user", {
-			id: req.params.id
-		});
+		const v = await User.getUser(req.params.id);
 
 		if (v === null) return res.status(404).json({
 			success: false,

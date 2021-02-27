@@ -4,7 +4,7 @@ import config from "../../config";
 import crypto from "crypto";
 import Logger from "../Logger";
 import WebhookHandler from "../WebhookHandler";
-import db from "../../db";
+import { User } from "../../db/models";
 
 interface Entry {
 	user: string;
@@ -65,8 +65,7 @@ export default class Verification {
 			expire: new Date(Date.now() + this.EXPIRE_TIME).toISOString()
 		}).get(email)!;
 		this.save();
-		db
-			.get("user", { id: user })
+		User.getUser(user)
 			.then(async (u) => WebhookHandler.executeDiscord("email", {
 				title: "Email Verification Started",
 				color: 0x00A000,
@@ -87,8 +86,7 @@ export default class Verification {
 		Logger.debug(`MailerVerification->remove`, `Removed the verification token for "${email}" (U-${v?.user || "Unknown"}, Reason: ${reason || "UNKNOWN"})`);
 		const i = this.ENTRIES.delete(email);
 		this.save();
-		db
-			.get("user", { email })
+		User.getUser({ email })
 			.then(async (u) => WebhookHandler.executeDiscord("email", {
 				title: "Email Verification Ended",
 				color: 0xF02C00,

@@ -150,7 +150,7 @@ app
 
 		if (e === undefined || v === undefined) return res.status(404).end("Unknown confirmation token.");
 
-		const u = await db.get("user", {
+		const u = await User.getUser({
 			id: v.user
 		});
 

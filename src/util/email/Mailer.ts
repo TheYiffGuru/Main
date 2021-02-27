@@ -53,28 +53,32 @@ export default class Mailer {
 			});
 	}
 
-	static async sendConfirmation(user: User) {
+	static async sendConfirmation(user: User | string) {
+		if (!User.isUser(user)) {
+			const v = await User.getUser(user);
+			if (v === null) return false;
+			user = v;
+		}
 		const t = Templater.get("confirm");
 		if (t === undefined) throw new TypeError("Faled to fetch email confirmation template.");
 		if (user.email === null) throw new TypeError(`[Mailer->sendConfirmation] User does not have an email address saved. (U-${user.id})`);
 		const { token } = Verification.add(user.email, user.id);
-		const s = await this.send(
+		return this.send(
 			user.email,
 			Templater.parseString(t.content.subject, {
 				NAME: user.name,
 				HANDLE: user.handle,
 				EMAIL: user.email,
 				TOKEN: token,
-				URL: `${config.web.baseURL()}/confirm-email?token=${token}`
+				URL: `${config.web.baseURL("api")}/confirm-email?token=${token}`
 			}),
 			Templater.parseString(t.content.body, {
 				NAME: user.name,
 				HANDLE: user.handle,
 				EMAIL: user.email,
 				TOKEN: token,
-				URL: `${config.web.baseURL()}/confirm-email?token=${token}`
+				URL: `${config.web.baseURL("api")}/confirm-email?token=${token}`
 			})
-		);
-		return s.rejected.length === 0;
+		).then(({ rejected: { length } }) => length === 0);
 	}
 }
